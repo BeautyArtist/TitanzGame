@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TitanzGame - Survive the Sundering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            /* New Cyberpunk/Pixel Art Theme */
+            --color-bg: #0A0F1E; /* Deep Navy Blue */
+            --color-accent: #00FFFF; /* Vibrant Cyan */
+            --color-secondary-accent: #FF00FF; /* Magenta */
+            --color-text-header: #F5F5F5;
+            --color-text-body: #a9a9b3;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-body);
+            font-family: 'Exo 2', sans-serif;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', cursive;
+            color: var(--color-text-header);
+            letter-spacing: 0.1em;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        .cursor-wisp {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--color-accent);
+            opacity: 0.5;
+            filter: blur(10px) drop-shadow(0 0 5px var(--color-accent));
+            transform-origin: center;
+            transition: all 0.2s ease;
+        }
+        
+        body:hover .cursor-wisp { opacity: 0.7; }
+
+        .cursor-wisp.hovered {
+            transform: scale(1.8);
+            opacity: 1;
+            filter: blur(15px) drop-shadow(0 0 10px var(--color-accent));
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--color-accent);
+            margin: 1rem auto 0;
+            box-shadow: 0 0 15px var(--color-accent);
+        }
+
+        .cta-button {
+            border: 2px solid var(--color-accent);
+            color: var(--color-text-header);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px -5px var(--color-accent);
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .cta-button:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+            box-shadow: 0 0 20px var(--color-accent);
+        }
+
+        .cta-button-secondary {
+             border: 2px solid var(--color-text-body);
+             color: var(--color-text-body);
+             background: rgba(169, 169, 179, 0.1);
+        }
+        .cta-button-secondary:hover {
+            background: var(--color-text-body);
+            color: var(--color-bg);
+            border-color: var(--color-text-body);
+            box-shadow: 0 0 15px #a9a9b3;
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+        #hero-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            transform: translateX(-50%) translateY(-50%);
+        }
+        
+        .hero-overlay {
+            background: radial-gradient(circle, rgba(10, 15, 30, 0.4) 0%, rgba(10, 15, 30, 0.9) 80%);
+        }
+
+        .pillar-card {
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+            background: rgba(100, 116, 139, 0.1);
+        }
+        .pillar-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+        
+        .team-member:hover .team-overlay {
+            opacity: 1;
+        }
+
+        /* Non-linear Roadmap Styles */
+        #roadmap-path {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            transition: stroke-dashoffset 1s linear;
+        }
+        .roadmap-node {
+            opacity: 0.2;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .roadmap-node.active {
+            opacity: 1;
+        }
+        .roadmap-node.active h3 {
+            color: var(--color-accent);
+        }
+        .roadmap-node.active .node-circle {
+            box-shadow: 0 0 20px var(--color-accent);
+        }
+
+        /* Whitepaper Modal Styles */
+        .whitepaper-modal {
+            background-color: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .whitepaper-content {
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-accent) var(--color-bg);
+        }
+        .whitepaper-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
+        }
+        .whitepaper-content h3 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+            border-left: 3px solid var(--color-secondary-accent);
+            padding-left: 1rem;
+        }
+        .whitepaper-content p, .whitepaper-content li {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .whitepaper-content ul {
+            list-style: none;
+            padding-left: 1rem;
+        }
+        .whitepaper-content li::before {
+            content: "»";
+            color: var(--color-accent);
+            margin-right: 0.5rem;
+        }
+
+    </style>
+</head>
+<body class="antialiased scroll-smooth">
+
+    <div class="custom-cursor">
+        <div class="cursor-wisp"></div>
+    </div>
+
+    <header class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-transparent" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#">
+                <img src="assets/images/logo.png" alt="TitanzGame Logo" class="h-12 w-auto">
+            </a>
+            <nav class="hidden md:flex space-x-8 text-lg">
+                <a href="#pitch" class="hover:text-cyan-400 transition-colors">The Game</a>
+                <a href="#gameplay" class="hover:text-cyan-400 transition-colors">Gameplay</a>
+                <a href="#roadmap" class="hover:text-cyan-400 transition-colors">Roadmap</a>
+                <a href="#team" class="hover:text-cyan-400 transition-colors">Team</a>
+            </nav>
+            <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button-secondary px-6 py-2 rounded-md hidden md:block">JOIN DISCORD</a>
+        </div>
+    </header>
+
+    <section class="hero-section h-screen flex items-center justify-center text-center text-white relative">
+        <video autoplay loop muted playsinline id="hero-video">
+             <source src="assets/videos/hero-background.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative z-10 p-6">
+            <h1 class="text-7xl md:text-9xl font-extrabold tracking-wider leading-tight animate-fade-in-down" style="text-shadow: 0 0 20px var(--color-accent);">
+                SURVIVE THE SUNDERING.
+            </h1>
+            <p class="mt-4 text-xl md:text-2xl max-w-3xl mx-auto text-stone-300 animate-fade-in-up">
+                In a world of awakened gods, you don't just fight the monsters. <br class="hidden md:block" /> You must become one to win.
+            </p>
+            <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#" class="cta-button px-10 py-4 text-xl rounded-md w-full sm:w-auto">WATCH THE REVEAL</a>
+                <a href="#" id="open-whitepaper-btn" class="cta-button-secondary px-10 py-4 text-xl rounded-md w-full sm:w-auto">READ THE LORE</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-6 py-24 space-y-32 md:space-y-48">
+        <section id="pitch" class="scroll-reveal">
+            <h2 class="section-title text-5xl md:text-6xl text-center">THE TITANZGAME HAS BEGUN.</h2>
+            <div class="mt-16 grid md:grid-cols-3 gap-8">
+                <div class="pillar-card p-8 rounded-lg text-center">
+                    <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M239.86,183.33,183.2,126.67a16,16,0,0,0-22.63,0L112,175.31,79.51,142.83a16,16,0,0,0-22.63,0L16.14,183.33a16,16,0,0,0,0,22.63l40.73,40.72a16,16,0,0,0,22.63,0L128,198.17l48.49,48.49a16,16,0,0,0,22.63,0l40.74-40.72a16,16,0,0,0,0-22.63ZM128,175.54l-48.49,48.49L38.78,183.31l32.49-32.48L128,207.54,176.49,159,217.22,199.7l-40.73,40.72ZM195.31,43.31,152,86.63,117.37,52,43.83,125.54a8,8,0,0,1-11.32,0L9.34,102.37a8,8,0,0,1,0-11.31L104.69,9.34a8,8,0,0,1,11.31,0l23.17,23.17L182.63,17.34a8,8,0,0,1,11.31,0l34.17,34.17a8,8,0,0,1,0,11.31Z"></path></svg>
+                    </div>
+                    <h3 class="text-3xl mt-4">HUNT</h3>
+                    <p class="mt-4 text-lg">Track and battle colossal behemoths in a high-stakes, open-world Action RPG. Every fight is a desperate struggle for survival.</p>
+                </div>
+                <div class="pillar-card p-8 rounded-lg text-center">
+                     <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M247.31,124.76c-.25-.33-11.45-15.22-35.31-31.51C184.34,75,157.6,64,128,64S71.66,75,44,93.25C19.89,109.8,9,124.54,8.69,124.76a8,8,0,0,0,0,6.48c.25.33,11.45,15.22,35.31,31.51C71.66,181,98.4,192,128,192s56.34-11,84-29.25c24.11-16.46,35-31.18,35.31-31.51a8,8,0,0,0,0-6.48ZM128,176c-26.51,0-48-21.49-48-48s21.49-48,48-48,48,21.49,48,48S154.51,176,128,176Zm0-64a16,16,0,1,0,16,16A16,16,0,0,0,128,112Z"></path></svg>
+                    </div>
+                    <h3 class="text-3xl mt-4">BECOME</h3>
+                    <p class="mt-4 text-lg">As a Shaper, subdue and bond with the Titanz you defeat. Command their primal power and turn the tide of the war.</p>
+                </div>
+                <div class="pillar-card p-8 rounded-lg text-center">
+                     <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM232,80.89v88.22a28.06,28.06,0,0,1-23,27.53,24.11,24.11,0,0,0-17.06,7.06,24.11,24.11,0,0,0-7.06,17.06,28.06,28.06,0,0,1-27.53,23A27.41,27.41,0,0,1,144,242.4a24.11,24.11,0,0,0-32,0A27.41,27.41,0,0,1,98.67,244a28.06,28.06,0,0,1-27.53-23,24.11,24.11,0,0,0-7.06-17.06,24.11,24.11,0,0,0-17.06-7.06,28.06,28.06,0,0,1-23-27.53V80.89A28.06,28.06,0,0,1,47,53.36a24.11,24.11,0,0,0,17.06-7.06,24.11,24.11,0,0,0,7.06-17.06A28.06,28.06,0,0,1,98.67,8,27.41,27.41,0,0,1,112,13.6a24.11,24.11,0,0,0,32,0A27.41,27.41,0,0,1,157.33,8a28.06,28.06,0,0,1,27.53,23,24.11,24.11,0,0,0,7.06,17.06,24.11,24.11,0,0,0,17.06,7.06A28.06,28.06,0,0,1,232,80.89ZM216,80.89A12,12,0,0,0,204.89,72a24.11,24.11,0,0,0-17.06-7.06,12,12,0,0,0-8.48,3.51,12,12,0,0,0-3.52,8.49,24.11,24.11,0,0,0-7.06,17.06,12,12,0,0,0,3.51,8.48A12,12,0,0,0,176,104a24.11,24.11,0,0,0,17.06,7.06,12,12,0,0,0,8.48-3.51,12,12,0,0,0,3.52-8.49V80.89ZM80,96.83a12,12,0,0,0,8.49,3.51,24.11,24.11,0,0,0,17.06-7.06,12,12,0,0,0,3.51-8.48,12,12,0,0,0-3.51-8.48,24.11,24.11,0,0,0-17.06-7.06,12,12,0,0,0-8.49,3.51,12,12,0,0,0-3.51,8.48A24.11,24.11,0,0,0,80,96.83Zm96,72.34a12,12,0,0,0-8.49-3.51,24.11,24.11,0,0,0-17.06,7.06,12,12,0,0,0-3.51,8.48,12,12,0,0,0,3.51,8.48,24.11,24.11,0,0,0,17.06,7.06,12,12,0,0,0,8.49-3.51,12,12,0,0,0,3.51-8.48A24.11,24.11,0,0,0,176,169.17ZM80,152.83a24.11,24.11,0,0,0-17.06,7.06,12,12,0,0,0-3.51,8.48,12,12,0,0,0,3.51,8.48A12,12,0,0,0,72,179.31a24.11,24.11,0,0,0,17.06-7.06,12,12,0,0,0,3.51-8.48,12,12,0,0,0-3.51-8.49A12,12,0,0,0,80,152.83Z"></path></svg>
+                    </div>
+                    <h3 class="text-3xl mt-4">OWN</h3>
+                    <p class="mt-4 text-lg">The bond with your Titanz is a unique NFT—a permanent trophy of your mastery. Evolve your power and trade on a player-driven market.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gameplay" class="scroll-reveal">
+            <h2 class="section-title text-5xl md:text-6xl text-center">MASTER THE CHAOS.</h2>
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="group relative aspect-square overflow-hidden rounded-lg">
+                    <img src="assets/images/world.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Gimmick of Aethel">
+                    <div class="absolute inset-0 bg-black/50 flex items-end p-6">
+                        <h3 class="text-3xl">THE WORLD</h3>
+                    </div>
+                </div>
+                <div class="group relative aspect-square overflow-hidden rounded-lg">
+                    <img src="assets/images/shapers.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Shapers">
+                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
+                        <h3 class="text-3xl">THE SHAPERS</h3>
+                    </div>
+                </div>
+                <div class="group relative aspect-square overflow-hidden rounded-lg">
+                    <img src="assets/images/hunt.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Hunt">
+                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
+                        <h3 class="text-3xl">THE HUNT</h3>
+                    </div>
+                </div>
+                 <div class="group relative aspect-square overflow-hidden rounded-lg">
+                    <img src="assets/images/titanz.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Titanz">
+                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
+                        <h3 class="text-3xl">THE TITANZ</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="scroll-reveal">
+            <h2 class="section-title text-5xl md:text-6xl text-center">THE PATH OF THE SHAPER.</h2>
+            <div class="mt-24 relative w-full max-w-5xl mx-auto h-[1000px] md:h-[600px]">
+                <svg class="absolute top-0 left-0 w-full h-full" width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="none">
+                    <path id="roadmap-path" d="M100,50 Q250,50 300,150 T500,250 Q600,300 700,400 T900,550" stroke="url(#line-gradient)" stroke-width="4" fill="none" />
+                    <defs>
+                        <linearGradient id="line-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" style="stop-color:var(--color-secondary-accent);stop-opacity:1" />
+                          <stop offset="100%" style="stop-color:var(--color-accent);stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <div id="node-1" class="roadmap-node absolute text-right" style="top: 2%; left: 1%;">
+                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute right-[-40px] top-1/2 -translate-y-1/2"></div>
+                    <h4 class="text-magenta-500 text-xl">PHASE 1</h4>
+                    <h3 class="text-3xl mt-1">THE AWAKENING</h3>
+                    <p class="text-sm">Q4 2025</p>
+                </div>
+
+                <div id="node-2" class="roadmap-node absolute" style="top: 22%; left: 35%;">
+                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute left-[-40px] top-1/2 -translate-y-1/2"></div>
+                    <h4 class="text-magenta-500 text-xl">PHASE 2</h4>
+                    <h3 class="text-3xl mt-1">THE FIRST SHAPERS</h3>
+                    <p class="text-sm">Q1 2026</p>
+                </div>
+
+                <div id="node-3" class="roadmap-node absolute text-right" style="top: 45%; left: 45%;">
+                     <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute right-[-40px] top-1/2 -translate-y-1/2"></div>
+                    <h4 class="text-magenta-500 text-xl">PHASE 3</h4>
+                    <h3 class="text-3xl mt-1">THE HUNT BEGINS</h3>
+                    <p class="text-sm">Q2-Q3 2026</p>
+                </div>
+                
+                <div id="node-4" class="roadmap-node absolute" style="top: 88%; left: 80%;">
+                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute left-[-40px] top-1/2 -translate-y-1/2"></div>
+                    <h4 class="text-magenta-500 text-xl">PHASE 4</h4>
+                    <h3 class="text-3xl mt-1">MASTERING THE CHAOS</h3>
+                    <p class="text-sm">Q4 2026 - Q1 2027</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="scroll-reveal">
+            <h2 class="section-title text-5xl md:text-6xl text-center">THE WORLDSMITHS.</h2>
+             <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="team-member group relative text-center">
+                    <img src="assets/images/jax.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Jax Thorne">
+                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
+                         <h3 class="text-3xl">JAX THORNE</h3>
+                         <p class="text-cyan-400 text-lg">Game Director</p>
+                    </div>
+                </div>
+                 <div class="team-member group relative text-center">
+                    <img src="assets/images/elara.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Dr. Elara Vance">
+                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
+                         <h3 class="text-3xl">DR. ELARA VANCE</h3>
+                         <p class="text-cyan-400 text-lg">Lead World Builder</p>
+                    </div>
+                </div>
+                 <div class="team-member group relative text-center">
+                    <img src="assets/images/cody.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Cody Jian">
+                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
+                         <h3 class="text-3xl">CODY "0X" JIAN</h3>
+                         <p class="text-cyan-400 text-lg">Lead Blockchain Architect</p>
+                    </div>
+                </div>
+                 <div class="team-member group relative text-center">
+                    <img src="assets/images/isabelle.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Isabelle Roux">
+                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
+                         <h3 class="text-3xl">ISABELLE ROUX</h3>
+                         <p class="text-cyan-400 text-lg">Art Director</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-black/50 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-5xl">JOIN THE HUNT.</h2>
+            <p class="mt-4 text-xl max-w-2xl mx-auto">Follow our journey and be the first to know about NFT drops, alpha access, and major announcements.</p>
+            <div class="mt-8 flex justify-center space-x-6">
+                <a href="https://x.com/TitanzGame" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">X</a>
+                <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">Discord</a>
+            </div>
+             <div class="mt-12 border-t border-slate-800 pt-8">
+                <p>&copy; 2025 TitanzGame. All rights reserved.</p>
+             </div>
+        </div>
+    </footer>
+
+    <div id="whitepaper-modal" class="whitepaper-modal fixed inset-0 z-[100] hidden p-4 md:p-8">
+        <button id="close-whitepaper-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
+        <div class="whitepaper-content h-full w-full max-w-4xl mx-auto overflow-y-auto p-8 rounded-lg">
+            <h2>TitanzGame Whitepaper</h2>
+            
+            <h3>1. The Sundering: A Shattered Peace</h3>
+            <p>For centuries, humanity believed they were the masters of their destiny on the planet Aethel. They built cities on and around the colossal remains of petrified, god-like beings, which they called the Titanz... In reality, they were guests in a graveyard, their power and ownership illusory and centralized.</p>
+            <p>TitanzGame is born from the principle that true power, and true ownership, must be earned... By using blockchain, the bond a player forges with a Titanz becomes an "Echo," a unique digital asset (NFT) that represents their skill, dedication, and mastery.</p>
+
+            <h3>2. The World of Aethel: Gameplay & Lore</h3>
+            <p>The fragile peace on Aethel shattered when "The Sundering," a mysterious energy wave, swept the planet. The Titanz awakened, not as gods, but as mindless, destructive forces of nature. You are a Shaper, a descendant of an ancient line who can psychically interface with these behemoths.</p>
+            <ul>
+                <li><strong>Hunt:</strong> Track colossal Titanz across vast, dynamic ecosystems. Analyze their weaknesses and prepare the battlefield.</li>
+                <li><strong>Subdue:</strong> Engage in multi-stage, skill-based battles reminiscent of epic boss fights.</li>
+                <li><strong>Become:</strong> Upon defeating a Titanz, a Shaper can psychically bond with it and directly control their bonded Titanz.</li>
+            </ul>
+
+            <h3>3. The Primal Bond: Web3 Integration</h3>
+            <p>Every unique, powerful entity in the game is an NFT on the Polygon blockchain. This provides verifiable proof of your achievements.</p>
+            <ul>
+                <li><strong>Genesis Shapers (Playable Characters):</strong> The foundational character NFTs. Limited supply with exclusive long-term benefits.</li>
+                <li><strong>Primal Cores (Titanz DNA):</strong> The most valuable assets. These NFTs are earned by subduing Titanz in the wild.</li>
+                <li><strong>Aethelian Land Sanctuaries (Land Plots):</strong> Rare plots of land shielded from the chaos.</li>
+            </ul>
+            
+            <h3>4. Tokenomics: The $AEGIS Token</h3>
+            <p>The entire TitanzGame economy is anchored by the $AEGIS token. Its utilities include marketplace transactions, bonding & evolution, crafting, staking, and governance.</p>
+            <p>Total Supply: 2,000,000,000 $AEGIS</p>
+            
+            </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = {
+                colors: {
+                    accent: getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim(),
+                    secondary: getComputedStyle(document.documentElement).getPropertyValue('--color-secondary-accent').trim(),
+                }
+            }
+
+            // --- Sound Engine ---
+            let soundsReady = false;
+            let synth, hoverSynth, clickSynth, rumbleSynth;
+
+            function initAudio() {
+                if (soundsReady) return;
+                Tone.start();
+                
+                hoverSynth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }, volume: -20 }).toDestination();
+                clickSynth = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 10, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4, attackCurve: 'exponential'}, volume: -10 }).toDestination();
+                rumbleSynth = new Tone.NoiseSynth({ noise: { type: 'brown' }, envelope: { attack: 0.1, decay: 0.3, sustain: 0 }, volume: -25 }).toDestination();
+                soundsReady = true;
+                document.body.removeEventListener('click', initAudio);
+            }
+            document.body.addEventListener('click', initAudio, { once: true });
+
+
+            // --- Custom Cursor ---
+            const cursor = document.querySelector('.custom-cursor');
+            const cursorWisp = document.querySelector('.cursor-wisp');
+            
+            window.addEventListener('mousemove', e => {
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+            });
+            
+            const interactiveElements = document.querySelectorAll('a, button, .pillar-card, .team-member, .group');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorWisp.classList.add('hovered');
+                    if (soundsReady) hoverSynth.triggerAttackRelease('C5', '8n');
+                });
+                el.addEventListener('mouseleave', () => cursorWisp.classList.remove('hovered'));
+                el.addEventListener('click', () => {
+                     if (soundsReady) clickSynth.triggerAttackRelease("C1", "4n");
+                });
+            });
+
+            // --- Navbar Scroll Effect ---
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                navbar.classList.toggle('bg-black/80', window.scrollY > 50);
+                navbar.classList.toggle('backdrop-blur-sm', window.scrollY > 50);
+            });
+
+            // --- Scroll Animations ---
+            let sectionRumblePlayed = new Map();
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        const sectionId = entry.target.id;
+                        if(sectionId && !sectionRumblePlayed.get(sectionId) && soundsReady) {
+                             rumbleSynth.triggerAttackRelease("0.2");
+                             sectionRumblePlayed.set(sectionId, true);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+            // --- Whitepaper Modal Logic ---
+            const modal = document.getElementById('whitepaper-modal');
+            const openBtn = document.getElementById('open-whitepaper-btn');
+            const closeBtn = document.getElementById('close-whitepaper-btn');
+
+            openBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+
+            // --- Non-linear Roadmap Animation ---
+            const roadmapSection = document.getElementById('roadmap');
+            const path = document.getElementById("roadmap-path");
+            const nodes = [
+                { el: document.getElementById('node-1'), progress: 0.05 },
+                { el: document.getElementById('node-2'), progress: 0.35 },
+                { el: document.getElementById('node-3'), progress: 0.65 },
+                { el: document.getElementById('node-4'), progress: 0.98 }
+            ];
+            let pathLength = 0;
+            // Use a small delay to ensure path is rendered for getTotalLength()
+            setTimeout(() => { pathLength = path.getTotalLength(); path.style.strokeDasharray = pathLength; path.style.strokeDashoffset = pathLength; }, 100);
+
+            function updateRoadmapAnimation() {
+                if(pathLength === 0) return;
+                const rect = roadmapSection.getBoundingClientRect();
+                const scrollPercent = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
+                
+                const drawLength = pathLength * scrollPercent;
+                path.style.strokeDashoffset = pathLength - drawLength;
+                
+                // Activate nodes as the path passes them
+                nodes.forEach(node => {
+                    if (scrollPercent >= node.progress) {
+                        node.el.classList.add('active');
+                    } else {
+                        node.el.classList.remove('active');
+                    }
+                });
+            }
+            window.addEventListener("scroll", updateRoadmapAnimation);
+        });
+    </script>
+
+</body>
+</html>
