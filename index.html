@@ -200,7 +200,7 @@
             margin-right: 0.5rem;
         }
 
-        /* === NEW: Loading Spinner Styles === */
+        /* Loading Spinner Styles */
         .loader {
             border: 5px solid rgba(255, 255, 255, 0.2);
             border-left-color: var(--color-accent);
@@ -228,13 +228,16 @@
             <a href="#">
                 <img src="assets/images/logo.png" alt="TitanzGame Logo" class="h-12 w-auto">
             </a>
-            <nav class="hidden md:flex space-x-8 text-lg">
+            <nav class="hidden md:flex items-center space-x-8 text-lg">
                 <a href="#pitch" class="hover:text-cyan-400 transition-colors">The Game</a>
                 <a href="#gameplay" class="hover:text-cyan-400 transition-colors">Gameplay</a>
                 <a href="#roadmap" class="hover:text-cyan-400 transition-colors">Roadmap</a>
                 <a href="#team" class="hover:text-cyan-400 transition-colors">Team</a>
             </nav>
-            <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button-secondary px-6 py-2 rounded-md hidden md:block">JOIN DISCORD</a>
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="https://jup.ag/swap/SOL-5EkzqN6Lt4PGkbfmf8AUZcpn8sUXK4KF5pnRQuwtpump" target="_blank" rel="noopener noreferrer" class="cta-button px-6 py-2 rounded-md">BUY $AEGIS</a>
+                <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button-secondary px-6 py-2 rounded-md">JOIN DISCORD</a>
+            </div>
         </div>
     </header>
 
@@ -534,7 +537,7 @@
                 document.body.style.overflow = '';
             });
 
-            // === NEW: Play Game Sequence ---
+            // --- Play Game Sequence ---
             const playBtn = document.getElementById('play-game-btn');
             const loadingOverlay = document.getElementById('loading-overlay');
             const comingSoonOverlay = document.getElementById('coming-soon-overlay');
