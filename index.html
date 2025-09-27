@@ -200,6 +200,21 @@
             margin-right: 0.5rem;
         }
 
+        /* === NEW: Loading Spinner Styles === */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-left-color: var(--color-accent);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body class="antialiased scroll-smooth">
@@ -225,7 +240,7 @@
 
     <section class="hero-section h-screen flex items-center justify-center text-center text-white relative">
         <video autoplay loop muted playsinline id="hero-video">
-             <source src="assets/videos/hero-background.mp4" type="video/mp4">
+            <source src="assets/videos/hero-background.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         <div class="hero-overlay absolute inset-0"></div>
@@ -237,7 +252,7 @@
                 In a world of awakened gods, you don't just fight the monsters. <br class="hidden md:block" /> You must become one to win.
             </p>
             <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#" class="cta-button px-10 py-4 text-xl rounded-md w-full sm:w-auto">WATCH THE REVEAL</a>
+                <a href="#" id="play-game-btn" class="cta-button px-10 py-4 text-xl rounded-md w-full sm:w-auto">PLAY GAME</a>
                 <a href="#" id="open-whitepaper-btn" class="cta-button-secondary px-10 py-4 text-xl rounded-md w-full sm:w-auto">READ THE LORE</a>
             </div>
         </div>
@@ -275,7 +290,7 @@
             <h2 class="section-title text-5xl md:text-6xl text-center">MASTER THE CHAOS.</h2>
             <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="group relative aspect-square overflow-hidden rounded-lg">
-                    <img src="assets/images/world.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Gimmick of Aethel">
+                    <img src="assets/images/world.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The World of Aethel">
                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
                         <h3 class="text-3xl">THE WORLD</h3>
                     </div>
@@ -385,7 +400,7 @@
             <h2 class="text-5xl">JOIN THE HUNT.</h2>
             <p class="mt-4 text-xl max-w-2xl mx-auto">Follow our journey and be the first to know about NFT drops, alpha access, and major announcements.</p>
             <div class="mt-8 flex justify-center space-x-6">
-                <a href="https://x.com/TitanzGame" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">X</a>
+                 <a href="https://x.com/TitanzGame" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">X</a>
                 <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">Discord</a>
             </div>
              <div class="mt-12 border-t border-slate-800 pt-8">
@@ -402,7 +417,6 @@
             <h3>1. The Sundering: A Shattered Peace</h3>
             <p>For centuries, humanity believed they were the masters of their destiny on the planet Aethel. They built cities on and around the colossal remains of petrified, god-like beings, which they called the Titanz... In reality, they were guests in a graveyard, their power and ownership illusory and centralized.</p>
             <p>TitanzGame is born from the principle that true power, and true ownership, must be earned... By using blockchain, the bond a player forges with a Titanz becomes an "Echo," a unique digital asset (NFT) that represents their skill, dedication, and mastery.</p>
-
             <h3>2. The World of Aethel: Gameplay & Lore</h3>
             <p>The fragile peace on Aethel shattered when "The Sundering," a mysterious energy wave, swept the planet. The Titanz awakened, not as gods, but as mindless, destructive forces of nature. You are a Shaper, a descendant of an ancient line who can psychically interface with these behemoths.</p>
             <ul>
@@ -410,7 +424,6 @@
                 <li><strong>Subdue:</strong> Engage in multi-stage, skill-based battles reminiscent of epic boss fights.</li>
                 <li><strong>Become:</strong> Upon defeating a Titanz, a Shaper can psychically bond with it and directly control their bonded Titanz.</li>
             </ul>
-
             <h3>3. The Primal Bond: Web3 Integration</h3>
             <p>Every unique, powerful entity in the game is an NFT on the Polygon blockchain. This provides verifiable proof of your achievements.</p>
             <ul>
@@ -418,12 +431,22 @@
                 <li><strong>Primal Cores (Titanz DNA):</strong> The most valuable assets. These NFTs are earned by subduing Titanz in the wild.</li>
                 <li><strong>Aethelian Land Sanctuaries (Land Plots):</strong> Rare plots of land shielded from the chaos.</li>
             </ul>
-            
             <h3>4. Tokenomics: The $AEGIS Token</h3>
             <p>The entire TitanzGame economy is anchored by the $AEGIS token. Its utilities include marketplace transactions, bonding & evolution, crafting, staking, and governance.</p>
             <p>Total Supply: 2,000,000,000 $AEGIS</p>
-            
-            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[101] hidden backdrop-blur-sm">
+        <div class="loader"></div>
+    </div>
+
+    <div id="coming-soon-overlay" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[101] hidden backdrop-blur-sm p-4 text-center">
+        <button id="close-coming-soon-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
+        <div>
+            <h2 class="text-7xl md:text-9xl" style="text-shadow: 0 0 20px var(--color-accent);">COMING SOON</h2>
+            <p class="mt-4 text-xl md:text-2xl text-stone-300">The Hunt will begin shortly. Follow us for updates.</p>
+        </div>
     </div>
 
 
@@ -504,10 +527,32 @@
             openBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                document.body.style.overflow = 'hidden';
             });
             closeBtn.addEventListener('click', () => {
                 modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+
+            // === NEW: Play Game Sequence ---
+            const playBtn = document.getElementById('play-game-btn');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const comingSoonOverlay = document.getElementById('coming-soon-overlay');
+            const closeComingSoonBtn = document.getElementById('close-coming-soon-btn');
+
+            playBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadingOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                    comingSoonOverlay.classList.remove('hidden');
+                }, 2500); // 2.5 second loading time
+            });
+
+            closeComingSoonBtn.addEventListener('click', () => {
+                comingSoonOverlay.classList.add('hidden');
                 document.body.style.overflow = '';
             });
 
@@ -521,7 +566,6 @@
                 { el: document.getElementById('node-4'), progress: 0.98 }
             ];
             let pathLength = 0;
-            // Use a small delay to ensure path is rendered for getTotalLength()
             setTimeout(() => { pathLength = path.getTotalLength(); path.style.strokeDasharray = pathLength; path.style.strokeDashoffset = pathLength; }, 100);
 
             function updateRoadmapAnimation() {
@@ -532,7 +576,6 @@
                 const drawLength = pathLength * scrollPercent;
                 path.style.strokeDashoffset = pathLength - drawLength;
                 
-                // Activate nodes as the path passes them
                 nodes.forEach(node => {
                     if (scrollPercent >= node.progress) {
                         node.el.classList.add('active');
