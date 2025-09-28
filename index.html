@@ -164,8 +164,8 @@
             box-shadow: 0 0 20px var(--color-accent);
         }
 
-        /* Whitepaper Modal Styles */
-        .whitepaper-modal {
+        /* Modal Styles */
+        .info-modal {
             background-color: rgba(10, 15, 30, 0.95);
             backdrop-filter: blur(10px);
         }
@@ -235,7 +235,7 @@
                 <a href="#team" class="hover:text-cyan-400 transition-colors">Team</a>
             </nav>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="https://jup.ag/tokens/5EkzqN6Lt4PGkbfmf8AUZcpn8sUXK4KF5pnRQuwtpump" target="_blank" rel="noopener noreferrer" class="cta-button px-6 py-2 rounded-md">BUY $AEGIS</a>
+                <a href="#" id="buy-aegis-btn" class="cta-button px-6 py-2 rounded-md">BUY $AEGIS</a>
                 <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button-secondary px-6 py-2 rounded-md">JOIN DISCORD</a>
             </div>
         </div>
@@ -412,7 +412,7 @@
         </div>
     </footer>
 
-    <div id="whitepaper-modal" class="whitepaper-modal fixed inset-0 z-[100] hidden p-4 md:p-8">
+    <div id="whitepaper-modal" class="info-modal fixed inset-0 z-[100] hidden p-4 md:p-8">
         <button id="close-whitepaper-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
         <div class="whitepaper-content h-full w-full max-w-4xl mx-auto overflow-y-auto p-8 rounded-lg">
             <h2>TitanzGame Whitepaper</h2>
@@ -449,6 +449,22 @@
         <div>
             <h2 class="text-7xl md:text-9xl" style="text-shadow: 0 0 20px var(--color-accent);">COMING SOON</h2>
             <p class="mt-4 text-xl md:text-2xl text-stone-300">The Hunt will begin shortly. Follow us for updates.</p>
+        </div>
+    </div>
+
+    <div id="airdrop-modal" class="info-modal fixed inset-0 z-[100] hidden p-4 md:p-8 flex items-center justify-center">
+        <button id="close-airdrop-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
+        <div class="text-center max-w-2xl mx-auto">
+             <h2 class="text-5xl md:text-6xl" style="color: var(--color-accent);">Token Distribution</h2>
+             <p class="mt-6 text-xl md:text-2xl text-stone-300 leading-relaxed">
+                The $AEGIS token contract (CA) is not yet live. The token will not be available for public sale.
+             </p>
+             <p class="mt-4 text-xl md:text-2xl text-stone-300 leading-relaxed">
+                It will be distributed exclusively via airdrop to holders of official TitanzGame NFTs.
+             </p>
+             <div class="mt-8">
+                <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button px-8 py-3 text-lg rounded-md">Join Discord for Updates</a>
+             </div>
         </div>
     </div>
 
@@ -523,17 +539,17 @@
             document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
 
             // --- Whitepaper Modal Logic ---
-            const modal = document.getElementById('whitepaper-modal');
-            const openBtn = document.getElementById('open-whitepaper-btn');
-            const closeBtn = document.getElementById('close-whitepaper-btn');
+            const whitepaperModal = document.getElementById('whitepaper-modal');
+            const openWhitepaperBtn = document.getElementById('open-whitepaper-btn');
+            const closeWhitepaperBtn = document.getElementById('close-whitepaper-btn');
 
-            openBtn.addEventListener('click', (e) => {
+            openWhitepaperBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                modal.classList.remove('hidden');
+                whitepaperModal.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
             });
-            closeBtn.addEventListener('click', () => {
-                modal.classList.add('hidden');
+            closeWhitepaperBtn.addEventListener('click', () => {
+                whitepaperModal.classList.add('hidden');
                 document.body.style.overflow = '';
             });
 
@@ -556,6 +572,22 @@
 
             closeComingSoonBtn.addEventListener('click', () => {
                 comingSoonOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+
+            // === NEW: Airdrop Info Modal Logic ===
+            const airdropModal = document.getElementById('airdrop-modal');
+            const openAirdropBtn = document.getElementById('buy-aegis-btn');
+            const closeAirdropBtn = document.getElementById('close-airdrop-btn');
+
+            openAirdropBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                airdropModal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
+
+            closeAirdropBtn.addEventListener('click', () => {
+                airdropModal.classList.add('hidden');
                 document.body.style.overflow = '';
             });
 
