@@ -3,593 +3,684 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TitanzGame - Survive the Sundering</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <title>Titanz Games | Game Development Studio</title>
     <style>
+        /* --- VISUAL THEME (Dark Mode + Neon) --- */
         :root {
-            /* New Cyberpunk/Pixel Art Theme */
-            --color-bg: #0A0F1E; /* Deep Navy Blue */
-            --color-accent: #00FFFF; /* Vibrant Cyan */
-            --color-secondary-accent: #FF00FF; /* Magenta */
-            --color-text-header: #F5F5F5;
-            --color-text-body: #a9a9b3;
+            --bg-color: #050505;
+            --text-white: #ffffff;
+            --text-gray: #a0a0a0;
+            --accent-cyan: #00f2ff;
+            --accent-purple: #bd00ff;
+            --card-bg: #111111;
+            --gradient-text: linear-gradient(90deg, #fff, var(--accent-cyan));
+            --gradient-glow: radial-gradient(circle at center, rgba(189, 0, 255, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            background-color: var(--color-bg);
-            color: var(--color-text-body);
-            font-family: 'Exo 2', sans-serif;
-            cursor: none;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: var(--font-main);
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Bebas Neue', cursive;
-            color: var(--color-text-header);
-            letter-spacing: 0.1em;
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .custom-cursor {
-            position: fixed;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease-out;
+        .gradient-text {
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
         }
 
-        .cursor-wisp {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--color-accent);
-            opacity: 0.5;
-            filter: blur(10px) drop-shadow(0 0 5px var(--color-accent));
-            transform-origin: center;
-            transition: all 0.2s ease;
-        }
-        
-        body:hover .cursor-wisp { opacity: 0.7; }
-
-        .cursor-wisp.hovered {
-            transform: scale(1.8);
-            opacity: 1;
-            filter: blur(15px) drop-shadow(0 0 10px var(--color-accent));
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: var(--color-accent);
-            margin: 1rem auto 0;
-            box-shadow: 0 0 15px var(--color-accent);
-        }
-
-        .cta-button {
-            border: 2px solid var(--color-accent);
-            color: var(--color-text-header);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 10px -5px var(--color-accent);
-            background: rgba(0, 255, 255, 0.1);
-        }
-        .cta-button:hover {
-            background: var(--color-accent);
-            color: var(--color-bg);
-            box-shadow: 0 0 20px var(--color-accent);
-        }
-
-        .cta-button-secondary {
-             border: 2px solid var(--color-text-body);
-             color: var(--color-text-body);
-             background: rgba(169, 169, 179, 0.1);
-        }
-        .cta-button-secondary:hover {
-            background: var(--color-text-body);
-            color: var(--color-bg);
-            border-color: var(--color-text-body);
-            box-shadow: 0 0 15px #a9a9b3;
-        }
-        
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-
-        .scroll-reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .hero-section {
-            position: relative;
-            overflow: hidden;
-        }
-        #hero-video {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
-            transform: translateX(-50%) translateY(-50%);
-        }
-        
-        .hero-overlay {
-            background: radial-gradient(circle, rgba(10, 15, 30, 0.4) 0%, rgba(10, 15, 30, 0.9) 80%);
-        }
-
-        .pillar-card {
-            border: 1px solid #334155;
-            transition: all 0.3s ease;
-            background: rgba(100, 116, 139, 0.1);
-        }
-        .pillar-card:hover {
-            border-color: var(--color-accent);
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
-        }
-        
-        .team-member:hover .team-overlay {
-            opacity: 1;
-        }
-
-        /* Non-linear Roadmap Styles */
-        #roadmap-path {
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000;
-            transition: stroke-dashoffset 1s linear;
-        }
-        .roadmap-node {
-            opacity: 0.2;
-            transition: opacity 0.5s ease-in-out;
-        }
-        .roadmap-node.active {
-            opacity: 1;
-        }
-        .roadmap-node.active h3 {
-            color: var(--color-accent);
-        }
-        .roadmap-node.active .node-circle {
-            box-shadow: 0 0 20px var(--color-accent);
-        }
-
-        /* Whitepaper Modal Styles */
-        .whitepaper-modal {
-            background-color: rgba(10, 15, 30, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        .whitepaper-content {
-            scrollbar-width: thin;
-            scrollbar-color: var(--color-accent) var(--color-bg);
-        }
-        .whitepaper-content h2 {
+        .section-title {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
         }
-        .whitepaper-content h3 {
-            font-size: 1.8rem;
-            margin-top: 2rem;
-            margin-bottom: 0.5rem;
-            border-left: 3px solid var(--color-secondary-accent);
-            padding-left: 1rem;
+
+        .divider-gradient {
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            width: 100px;
+            margin: 0 auto 50px auto;
+            border-radius: 2px;
         }
-        .whitepaper-content p, .whitepaper-content li {
+
+        /* --- HERO SECTION (Single Image / CSS Background) --- */
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        /* SCI-FI CSS BACKGROUND (Placeholder for your Image) */
+        .hero-bg {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    z-index: 0;
+
+    /* REPLACE 'background.jpg' WITH YOUR EXACT FILE NAME */
+    background: linear-gradient(rgba(0,0,0,0.5), #000), url('background.png');
+
+    /* This makes sure the image covers the whole screen */
+    background-size: cover;
+    background-position: center;
+    
+    /* Keep the animation if you like the slow zoom effect */
+    animation: pulseGlow 15s infinite alternate;
+}
+        
+        /* If you have a real image, uncomment below and add URL */
+        /* .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('YOUR_IMAGE_URL.jpg');
+            background-size: cover;
+            background-position: center;
+        } 
+        */
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .hero-content {
+            z-index: 2;
+            position: relative;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 20px;
+            display: block;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-content h1 {
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: #fff;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            color: #ddd;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- STATS BAR (Accomplishments) --- */
+        .stats-bar {
+            background: #111;
+            border-bottom: 1px solid #222;
+            padding: 40px 0;
+            position: relative;
+            z-index: 5;
+            margin-top: -5px; /* Pull up to connect with hero */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            font-weight: 900;
+        }
+
+        .stat-item p {
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: #888;
+        }
+
+        /* --- PORTFOLIO SECTION --- */
+        #portfolio { padding: 100px 0; }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 30px rgba(189, 0, 255, 0.1);
+        }
+
+        .media-placeholder {
+            height: 220px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            position: relative;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        .media-placeholder img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .media-placeholder img { transform: scale(1.05); }
+        
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 3rem;
+            color: var(--accent-cyan);
+            z-index: 1;
+        }
+
+        .project-card:hover .play-overlay { opacity: 1; cursor: pointer; }
+
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; background: var(--card-bg); position: relative; z-index: 2; }
+
+        .platform-tag {
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .project-title { font-size: 1.4rem; margin-bottom: 10px; color: #fff; }
+        .project-desc { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 20px; flex-grow: 1; }
+
+        .btn-link {
+            align-self: flex-start;
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-link:hover { background: var(--accent-purple); border-color: var(--accent-purple); color: #fff; }
+
+        /* --- FOUNDER SECTION --- */
+        #founder {
+            padding: 100px 0;
+            background: linear-gradient(to right, #0a0a0a, #150020);
+            position: relative;
+        }
+
+        .founder-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .founder-image-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .founder-img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: -20px 20px 0px rgba(0, 242, 255, 0.1); /* Stylized shadow */
+            border: 1px solid #333;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .founder-content {
+            flex: 1.5;
+            min-width: 300px;
+        }
+
+        .founder-label {
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .founder-name { font-size: 3rem; line-height: 1.1; margin-bottom: 20px; }
+        .founder-bio { font-size: 1.1rem; color: #ccc; margin-bottom: 30px; }
+
+        /* --- TESTIMONIALS --- */
+        #testimonials { padding: 100px 0; background: #050505; }
+        .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .review-card { background: linear-gradient(145deg, #111, #0c0c0c); padding: 40px; border-radius: 20px; border-left: 4px solid var(--accent-cyan); position: relative; }
+        .review-card::before { content: "“"; position: absolute; top: 10px; left: 20px; font-size: 4rem; color: rgba(255,255,255,0.05); font-family: serif; }
+        .review-text { font-style: italic; font-size: 1.05rem; margin-bottom: 25px; color: #ddd; position: relative; z-index: 1; }
+        .client-name { font-weight: bold; color: var(--accent-purple); }
+        .source-tag { font-size: 0.8rem; color: #666; margin-top: 5px; }
+
+        /* --- CTA BUTTONS --- */
+        .btn-cta {
+            padding: 15px 40px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
             font-size: 1.1rem;
-            line-height: 1.7;
-            margin-bottom: 1rem;
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .whitepaper-content ul {
-            list-style: none;
-            padding-left: 1rem;
-        }
-        .whitepaper-content li::before {
-            content: "»";
-            color: var(--color-accent);
-            margin-right: 0.5rem;
-        }
+        .btn-cta:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); }
 
-        /* Loading Spinner Styles */
-        .loader {
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            border-left-color: var(--color-accent);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
+        .btn-cta.floating {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+            padding: 15px 30px; box-shadow: 0 10px 40px rgba(0, 242, 255, 0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+            background: linear-gradient(135deg, var(--accent-purple), #000);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
+        @keyframes popIn { 0% { transform: scale(0) translateY(100px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        /* --- FOOTER --- */
+        footer { padding: 80px 0; text-align: center; background: linear-gradient(to top, #150020, #050505); }
+        .footer-title { font-size: 2rem; margin-bottom: 30px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .social-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 40px; }
+        .social-links a { font-size: 1.1rem; color: #ccc; border-bottom: 1px solid transparent; padding-bottom: 5px; }
+        .social-links a:hover { color: var(--accent-cyan); border-bottom: 1px solid var(--accent-purple); }
+        .copyright { color: #444; font-size: 0.8rem; }
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+        .modal-content { background: #111; padding: 40px; border-radius: 20px; border: 1px solid var(--accent-cyan); width: 90%; max-width: 500px; position: relative; box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); animation: slideUp 0.3s ease; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #fff; cursor: pointer; transition: color 0.3s; }
+        .close-modal:hover { color: var(--accent-purple); }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; margin-bottom: 8px; color: var(--accent-cyan); font-size: 0.9rem; font-weight: bold; }
+        .form-input, .form-textarea { width: 100%; padding: 12px; background: #222; border: 1px solid #333; border-radius: 8px; color: #fff; font-family: inherit; transition: border-color 0.3s; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--accent-purple); box-shadow: 0 0 10px rgba(189, 0, 255, 0.2); }
+        .btn-submit { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); border: none; border-radius: 50px; color: #fff; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; margin-top: 10px; transition: opacity 0.3s; }
+        .btn-submit:hover { opacity: 0.9; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); } to { transform: translateY(0); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 3rem; }
+            .stats-grid { flex-direction: column; gap: 20px; }
+            .founder-wrapper { flex-direction: column; text-align: center; }
+            .founder-img { margin-bottom: 30px; }
         }
     </style>
 </head>
-<body class="antialiased scroll-smooth">
+<body>
 
-    <div class="custom-cursor">
-        <div class="cursor-wisp"></div>
-    </div>
+    <!-- HERO SECTION (Single Background) -->
+    <header>
+        <!-- CSS-Generated Sci-Fi Background -->
+        <div class="hero-bg"></div>
 
-    <header class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 bg-transparent" id="navbar">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#">
-                <img src="assets/images/logo.png" alt="TitanzGame Logo" class="h-12 w-auto">
-            </a>
-            <nav class="hidden md:flex items-center space-x-8 text-lg">
-                <a href="#pitch" class="hover:text-cyan-400 transition-colors">The Game</a>
-                <a href="#gameplay" class="hover:text-cyan-400 transition-colors">Gameplay</a>
-                <a href="#roadmap" class="hover:text-cyan-400 transition-colors">Roadmap</a>
-                <a href="#team" class="hover:text-cyan-400 transition-colors">Team</a>
-            </nav>
-            <div class="hidden md:flex items-center space-x-4">
-                <a href="https://jup.ag/swap/SOL-5EkzqN6Lt4PGkbfmf8AUZcpn8sUXK4KF5pnRQuwtpump" target="_blank" rel="noopener noreferrer" class="cta-button px-6 py-2 rounded-md">BUY $AEGIS</a>
-                <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="cta-button-secondary px-6 py-2 rounded-md">JOIN DISCORD</a>
+        <div class="container hero-content">
+            <span class="hero-subtitle">Welcome to</span>
+            <h1>TITANZ GAMES</h1>
+            <p>
+                We forge immersive worlds and high-performance gaming experiences. 
+                From viral simulation hits to psychological horror, we turn concepts into playable realities.
+            </p>
+            
+            <div style="height: 70px; display: flex; align-items: center; justify-content: center; margin-top: 10px; width: 100%;">
+                <button id="ctaBtn" class="btn-cta" onclick="openModal()">Start a Project</button>
             </div>
         </div>
     </header>
 
-    <section class="hero-section h-screen flex items-center justify-center text-center text-white relative">
-        <video autoplay loop muted playsinline id="hero-video">
-            <source src="assets/videos/hero-background.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="hero-overlay absolute inset-0"></div>
-        <div class="relative z-10 p-6">
-            <h1 class="text-7xl md:text-9xl font-extrabold tracking-wider leading-tight animate-fade-in-down" style="text-shadow: 0 0 20px var(--color-accent);">
-                SURVIVE THE SUNDERING.
-            </h1>
-            <p class="mt-4 text-xl md:text-2xl max-w-3xl mx-auto text-stone-300 animate-fade-in-up">
-                In a world of awakened gods, you don't just fight the monsters. <br class="hidden md:block" /> You must become one to win.
-            </p>
-            <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#" id="play-game-btn" class="cta-button px-10 py-4 text-xl rounded-md w-full sm:w-auto">PLAY GAME</a>
-                <a href="#" id="open-whitepaper-btn" class="cta-button-secondary px-10 py-4 text-xl rounded-md w-full sm:w-auto">READ THE LORE</a>
+    <!-- STATS / ACCOMPLISHMENTS BAR -->
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>10M+</h3>
+                    <p>Global Downloads</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100+</h3>
+                    <p>Projects Shipped</p>
+                </div>
+                <div class="stat-item">
+                    <h3>7+</h3>
+                    <p>Years of Innovation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTFOLIO SECTION -->
+    <section id="portfolio">
+        <div class="container">
+            <h2 class="section-title">Our Projects</h2>
+            <div class="divider-gradient"></div>
+            
+            <div class="project-grid">
+                <!-- Project 1 -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/strategotchi.gif" alt="Strategotchi Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">Web 3.0 / Browser</span>
+                        <h3 class="project-title">Strategotchi</h3>
+                        <p class="project-desc">A Web 3.0 turn-based strategy game built on the Aavegotchi ecosystem using Harvesters.</p>
+                        <a href="https://strategotchi.io/" target="_blank" class="btn-link">View Project</a>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/internet-cafe.gif" alt="Internet Cafe Tycoon Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">Mobile (Android/iOS)</span>
+                        <h3 class="project-title">Internet Cafe Tycoon</h3>
+                        <p class="project-desc">5M+ Downloads. Viral business simulation managing hardware upgrades and interior design.</p>
+                        <a href="https://apps.apple.com/us/app/internet-cafe-business-tycoon/id1616308238" target="_blank" class="btn-link">View App Store</a>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/mapbox.gif" alt="Map Box Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">PC / Steam</span>
+                        <h3 class="project-title">Map Box</h3>
+                        <p class="project-desc">Creative sandbox building game empowering players to construct worlds with intuitive tools.</p>
+                        <a href="#" class="btn-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Project 4 -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/amygdala.gif" alt="The Amygdala Protocol Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">PC (Steam)</span>
+                        <h3 class="project-title">The Amygdala Protocol</h3>
+                        <p class="project-desc">First-person psychological horror with dynamic panic systems and stealth gameplay.</p>
+                        <a href="https://store.steampowered.com/app/3822180/The_Amygdala_Protocol/" target="_blank" class="btn-link">Steam Page</a>
+                    </div>
+                </div>
+
+                <!-- Project 5: REPLACED PixelTorque with Tap Drifter -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/tapdrifter.gif" alt="Tap Drifter Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">Mobile / Arcade</span>
+                        <h3 class="project-title">Tap Drifter</h3>
+                        <p class="project-desc">Fast-paced arcade drifting. Tap to control drift angles and navigate endless procedural tracks.</p>
+                        <a href="#" class="btn-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Project 6 -->
+                <div class="project-card">
+                    <div class="media-placeholder">
+                        <img src="gifs/fruitmerge.gif" alt="Fruit Merge Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <div class="play-overlay">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <span class="platform-tag">Mobile / Casual</span>
+                        <h3 class="project-title">Fruit Merge</h3>
+                        <p class="project-desc">Suika-style puzzle game combining Pac-Man aesthetics with physics merging mechanics.</p>
+                        <a href="#" class="btn-link">View Details</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <main class="container mx-auto px-6 py-24 space-y-32 md:space-y-48">
-        <section id="pitch" class="scroll-reveal">
-            <h2 class="section-title text-5xl md:text-6xl text-center">THE TITANZGAME HAS BEGUN.</h2>
-            <div class="mt-16 grid md:grid-cols-3 gap-8">
-                <div class="pillar-card p-8 rounded-lg text-center">
-                    <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M239.86,183.33,183.2,126.67a16,16,0,0,0-22.63,0L112,175.31,79.51,142.83a16,16,0,0,0-22.63,0L16.14,183.33a16,16,0,0,0,0,22.63l40.73,40.72a16,16,0,0,0,22.63,0L128,198.17l48.49,48.49a16,16,0,0,0,22.63,0l40.74-40.72a16,16,0,0,0,0-22.63ZM128,175.54l-48.49,48.49L38.78,183.31l32.49-32.48L128,207.54,176.49,159,217.22,199.7l-40.73,40.72ZM195.31,43.31,152,86.63,117.37,52,43.83,125.54a8,8,0,0,1-11.32,0L9.34,102.37a8,8,0,0,1,0-11.31L104.69,9.34a8,8,0,0,1,11.31,0l23.17,23.17L182.63,17.34a8,8,0,0,1,11.31,0l34.17,34.17a8,8,0,0,1,0,11.31Z"></path></svg>
-                    </div>
-                    <h3 class="text-3xl mt-4">HUNT</h3>
-                    <p class="mt-4 text-lg">Track and battle colossal behemoths in a high-stakes, open-world Action RPG. Every fight is a desperate struggle for survival.</p>
+    <!-- LEADERSHIP / FOUNDER SECTION -->
+    <section id="founder">
+        <div class="container">
+            <div class="founder-wrapper">
+                <div class="founder-image-box">
+                    <!-- Ensure your image is named 'profile.png' and is in the same folder -->
+                    <img src="profile.png" alt="Noman Nazir" class="founder-img" onerror="this.src='https://via.placeholder.com/400x500/222/555?text=Founder+Image'">
                 </div>
-                <div class="pillar-card p-8 rounded-lg text-center">
-                     <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M247.31,124.76c-.25-.33-11.45-15.22-35.31-31.51C184.34,75,157.6,64,128,64S71.66,75,44,93.25C19.89,109.8,9,124.54,8.69,124.76a8,8,0,0,0,0,6.48c.25.33,11.45,15.22,35.31,31.51C71.66,181,98.4,192,128,192s56.34-11,84-29.25c24.11-16.46,35-31.18,35.31-31.51a8,8,0,0,0,0-6.48ZM128,176c-26.51,0-48-21.49-48-48s21.49-48,48-48,48,21.49,48,48S154.51,176,128,176Zm0-64a16,16,0,1,0,16,16A16,16,0,0,0,128,112Z"></path></svg>
-                    </div>
-                    <h3 class="text-3xl mt-4">BECOME</h3>
-                    <p class="mt-4 text-lg">As a Shaper, subdue and bond with the Titanz you defeat. Command their primal power and turn the tide of the war.</p>
-                </div>
-                <div class="pillar-card p-8 rounded-lg text-center">
-                     <div class="text-6xl text-cyan-400 mb-4 flex justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM232,80.89v88.22a28.06,28.06,0,0,1-23,27.53,24.11,24.11,0,0,0-17.06,7.06,24.11,24.11,0,0,0-7.06,17.06,28.06,28.06,0,0,1-27.53,23A27.41,27.41,0,0,1,144,242.4a24.11,24.11,0,0,0-32,0A27.41,27.41,0,0,1,98.67,244a28.06,28.06,0,0,1-27.53-23,24.11,24.11,0,0,0-7.06-17.06,24.11,24.11,0,0,0-17.06-7.06,28.06,28.06,0,0,1-23-27.53V80.89A28.06,28.06,0,0,1,47,53.36a24.11,24.11,0,0,0,17.06-7.06,24.11,24.11,0,0,0,7.06-17.06A28.06,28.06,0,0,1,98.67,8,27.41,27.41,0,0,1,112,13.6a24.11,24.11,0,0,0,32,0A27.41,27.41,0,0,1,157.33,8a28.06,28.06,0,0,1,27.53,23,24.11,24.11,0,0,0,7.06,17.06,24.11,24.11,0,0,0,17.06,7.06A28.06,28.06,0,0,1,232,80.89ZM216,80.89A12,12,0,0,0,204.89,72a24.11,24.11,0,0,0-17.06-7.06,12,12,0,0,0-8.48,3.51,12,12,0,0,0-3.52,8.49,24.11,24.11,0,0,0-7.06,17.06,12,12,0,0,0,3.51,8.48A12,12,0,0,0,176,104a24.11,24.11,0,0,0,17.06,7.06,12,12,0,0,0,8.48-3.51,12,12,0,0,0,3.52-8.49V80.89ZM80,96.83a12,12,0,0,0,8.49,3.51,24.11,24.11,0,0,0,17.06-7.06,12,12,0,0,0,3.51-8.48,12,12,0,0,0-3.51-8.48,24.11,24.11,0,0,0-17.06-7.06,12,12,0,0,0-8.49,3.51,12,12,0,0,0-3.51,8.48A24.11,24.11,0,0,0,80,96.83Zm96,72.34a12,12,0,0,0-8.49-3.51,24.11,24.11,0,0,0-17.06,7.06,12,12,0,0,0-3.51,8.48,12,12,0,0,0,3.51,8.48,24.11,24.11,0,0,0,17.06,7.06,12,12,0,0,0,8.49-3.51,12,12,0,0,0,3.51-8.48A24.11,24.11,0,0,0,176,169.17ZM80,152.83a24.11,24.11,0,0,0-17.06,7.06,12,12,0,0,0-3.51,8.48,12,12,0,0,0,3.51,8.48A12,12,0,0,0,72,179.31a24.11,24.11,0,0,0,17.06-7.06,12,12,0,0,0,3.51-8.48,12,12,0,0,0-3.51-8.49A12,12,0,0,0,80,152.83Z"></path></svg>
-                    </div>
-                    <h3 class="text-3xl mt-4">OWN</h3>
-                    <p class="mt-4 text-lg">The bond with your Titanz is a unique NFT—a permanent trophy of your mastery. Evolve your power and trade on a player-driven market.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="gameplay" class="scroll-reveal">
-            <h2 class="section-title text-5xl md:text-6xl text-center">MASTER THE CHAOS.</h2>
-            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="group relative aspect-square overflow-hidden rounded-lg">
-                    <img src="assets/images/world.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The World of Aethel">
-                    <div class="absolute inset-0 bg-black/50 flex items-end p-6">
-                        <h3 class="text-3xl">THE WORLD</h3>
-                    </div>
-                </div>
-                <div class="group relative aspect-square overflow-hidden rounded-lg">
-                    <img src="assets/images/shapers.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Shapers">
-                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
-                        <h3 class="text-3xl">THE SHAPERS</h3>
-                    </div>
-                </div>
-                <div class="group relative aspect-square overflow-hidden rounded-lg">
-                    <img src="assets/images/hunt.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Hunt">
-                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
-                        <h3 class="text-3xl">THE HUNT</h3>
-                    </div>
-                </div>
-                 <div class="group relative aspect-square overflow-hidden rounded-lg">
-                    <img src="assets/images/titanz.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="The Titanz">
-                     <div class="absolute inset-0 bg-black/50 flex items-end p-6">
-                        <h3 class="text-3xl">THE TITANZ</h3>
+                <div class="founder-content">
+                    <span class="founder-label">Leadership</span>
+                    <h2 class="founder-name">Noman Nazir<br><span class="gradient-text">Founder & Lead Developer</span></h2>
+                    <p class="founder-bio">
+                        With over 7 years of specialized experience in the game industry, I founded Titanz Games to bridge the gap between creative vision and technical excellence. 
+                        My expertise spans advanced Unity systems, multiplayer network architecture (Photon/PlayFab), and high-fidelity VR simulations.
+                        <br><br>
+                        Whether leading complex development cycles for viral mobile hits or architecting atmospheric horror experiences for Steam, my focus remains on one thing: delivering polished, immersive gameplay.
+                    </p>
+                    <div class="social-links" style="justify-content: flex-start;">
+                        <a href="https://www.linkedin.com/in/noman-nazir-37a983289/" target="_blank">LinkedIn</a>
+                        <!-- UPDATED: Replaced Upwork with Fiverr -->
+                        <a href="https://www.fiverr.com/game_dev3loper" target="_blank">Fiverr Profile</a>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="roadmap" class="scroll-reveal">
-            <h2 class="section-title text-5xl md:text-6xl text-center">THE PATH OF THE SHAPER.</h2>
-            <div class="mt-24 relative w-full max-w-5xl mx-auto h-[1000px] md:h-[600px]">
-                <svg class="absolute top-0 left-0 w-full h-full" width="100%" height="100%" viewBox="0 0 1000 600" preserveAspectRatio="none">
-                    <path id="roadmap-path" d="M100,50 Q250,50 300,150 T500,250 Q600,300 700,400 T900,550" stroke="url(#line-gradient)" stroke-width="4" fill="none" />
-                    <defs>
-                        <linearGradient id="line-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" style="stop-color:var(--color-secondary-accent);stop-opacity:1" />
-                          <stop offset="100%" style="stop-color:var(--color-accent);stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                </svg>
+    <!-- TESTIMONIALS SECTION -->
+    <section id="testimonials">
+        <div class="container">
+            <h2 class="section-title">Client Feedback</h2>
+            <div class="divider-gradient"></div>
 
-                <div id="node-1" class="roadmap-node absolute text-right" style="top: 2%; left: 1%;">
-                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute right-[-40px] top-1/2 -translate-y-1/2"></div>
-                    <h4 class="text-magenta-500 text-xl">PHASE 1</h4>
-                    <h3 class="text-3xl mt-1">THE AWAKENING</h3>
-                    <p class="text-sm">Q4 2025</p>
+            <div class="review-grid">
+                <!-- Reviews -->
+                <div class="review-card">
+                    <p class="review-text">"Exceptional Multiplayer Integration. Titanz Games handled the synchronization and lag compensation perfectly."</p>
+                    <div class="client-name">Verified Client (USA)</div>
+                    <div class="source-tag">Via Upwork</div>
                 </div>
-
-                <div id="node-2" class="roadmap-node absolute" style="top: 22%; left: 35%;">
-                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute left-[-40px] top-1/2 -translate-y-1/2"></div>
-                    <h4 class="text-magenta-500 text-xl">PHASE 2</h4>
-                    <h3 class="text-3xl mt-1">THE FIRST SHAPERS</h3>
-                    <p class="text-sm">Q1 2026</p>
+                <div class="review-card">
+                    <p class="review-text">"Saved Our Project. They fixed the save-system errors and optimized the game's performance, increasing our FPS by 30%."</p>
+                    <div class="client-name">Verified Client (UK)</div>
+                    <div class="source-tag">Via Upwork</div>
                 </div>
-
-                <div id="node-3" class="roadmap-node absolute text-right" style="top: 45%; left: 45%;">
-                     <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute right-[-40px] top-1/2 -translate-y-1/2"></div>
-                    <h4 class="text-magenta-500 text-xl">PHASE 3</h4>
-                    <h3 class="text-3xl mt-1">THE HUNT BEGINS</h3>
-                    <p class="text-sm">Q2-Q3 2026</p>
+                <div class="review-card">
+                    <p class="review-text">"Delivered a complete prototype for our Steam sandbox concept. The team understood the vision immediately. Clean, modular code."</p>
+                    <div class="client-name">Verified Client (Germany)</div>
+                    <div class="source-tag">Via Upwork</div>
                 </div>
-                
-                <div id="node-4" class="roadmap-node absolute" style="top: 88%; left: 80%;">
-                    <div class="node-circle w-5 h-5 rounded-full border-4 border-cyan-400 bg-gray-800 absolute left-[-40px] top-1/2 -translate-y-1/2"></div>
-                    <h4 class="text-magenta-500 text-xl">PHASE 4</h4>
-                    <h3 class="text-3xl mt-1">MASTERING THE CHAOS</h3>
-                    <p class="text-sm">Q4 2026 - Q1 2027</p>
+                <div class="review-card">
+                    <p class="review-text">"Best Unity Developers on Fiverr! Delivered a polished product with smooth physics and addictive gameplay. Just like Suika!"</p>
+                    <div class="client-name">Verified Buyer</div>
+                    <div class="source-tag">Via Fiverr</div>
+                </div>
+                <div class="review-card">
+                    <p class="review-text">"Fast turnaround. Handled AdMob and IAP integration perfectly. The game is live and generating revenue. Thank you!"</p>
+                    <div class="client-name">Verified Buyer</div>
+                    <div class="source-tag">Via Fiverr</div>
+                </div>
+                <div class="review-card">
+                    <p class="review-text">"High quality 3D work. Set up the lighting and 'Auto Hand' VR mechanics exactly as requested for the Meta Quest."</p>
+                    <div class="client-name">Verified Buyer</div>
+                    <div class="source-tag">Via Fiverr</div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="team" class="scroll-reveal">
-            <h2 class="section-title text-5xl md:text-6xl text-center">THE WORLDSMITHS.</h2>
-             <div class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="team-member group relative text-center">
-                    <img src="assets/images/jax.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Jax Thorne">
-                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
-                         <h3 class="text-3xl">JAX THORNE</h3>
-                         <p class="text-cyan-400 text-lg">Game Director</p>
-                    </div>
-                </div>
-                 <div class="team-member group relative text-center">
-                    <img src="assets/images/elara.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Dr. Elara Vance">
-                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
-                         <h3 class="text-3xl">DR. ELARA VANCE</h3>
-                         <p class="text-cyan-400 text-lg">Lead World Builder</p>
-                    </div>
-                </div>
-                 <div class="team-member group relative text-center">
-                    <img src="assets/images/cody.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Cody Jian">
-                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
-                         <h3 class="text-3xl">CODY "0X" JIAN</h3>
-                         <p class="text-cyan-400 text-lg">Lead Blockchain Architect</p>
-                    </div>
-                </div>
-                 <div class="team-member group relative text-center">
-                    <img src="assets/images/isabelle.jpg" class="w-full h-auto rounded-lg grayscale group-hover:grayscale-0 transition-all duration-300" alt="Isabelle Roux">
-                    <div class="team-overlay absolute inset-0 bg-black/70 opacity-0 transition-opacity duration-300 flex flex-col justify-end p-6">
-                         <h3 class="text-3xl">ISABELLE ROUX</h3>
-                         <p class="text-cyan-400 text-lg">Art Director</p>
-                    </div>
-                </div>
-             </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-black/50 py-12">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-5xl">JOIN THE HUNT.</h2>
-            <p class="mt-4 text-xl max-w-2xl mx-auto">Follow our journey and be the first to know about NFT drops, alpha access, and major announcements.</p>
-            <div class="mt-8 flex justify-center space-x-6">
-                 <a href="https://x.com/TitanzGame" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">X</a>
-                <a href="https://discord.gg/WFyX755Q3E" target="_blank" rel="noopener noreferrer" class="text-4xl hover:text-cyan-400 transition-colors">Discord</a>
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <h2 class="footer-title">Ready to build the next hit?</h2>
+            
+            <div class="social-links">
+                <a href="mailto:noman3869@gmail.com">Email Us</a>
+                <a href="https://www.upwork.com/freelancers/~015eeb9799f638ed9c" target="_blank">Upwork</a>
+                <a href="https://www.fiverr.com/game_dev3loper" target="_blank">Fiverr</a>
+                <a href="https://www.linkedin.com/in/noman-nazir-37a983289/" target="_blank">LinkedIn</a>
             </div>
-             <div class="mt-12 border-t border-slate-800 pt-8">
-                <p>&copy; 2025 TitanzGame. All rights reserved.</p>
-             </div>
+            
+            <p class="copyright">Copyright © 2026 Titanz Games. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <div id="whitepaper-modal" class="whitepaper-modal fixed inset-0 z-[100] hidden p-4 md:p-8">
-        <button id="close-whitepaper-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
-        <div class="whitepaper-content h-full w-full max-w-4xl mx-auto overflow-y-auto p-8 rounded-lg">
-            <h2>TitanzGame Whitepaper</h2>
-            
-            <h3>1. The Sundering: A Shattered Peace</h3>
-            <p>For centuries, humanity believed they were the masters of their destiny on the planet Aethel. They built cities on and around the colossal remains of petrified, god-like beings, which they called the Titanz... In reality, they were guests in a graveyard, their power and ownership illusory and centralized.</p>
-            <p>TitanzGame is born from the principle that true power, and true ownership, must be earned... By using blockchain, the bond a player forges with a Titanz becomes an "Echo," a unique digital asset (NFT) that represents their skill, dedication, and mastery.</p>
-            <h3>2. The World of Aethel: Gameplay & Lore</h3>
-            <p>The fragile peace on Aethel shattered when "The Sundering," a mysterious energy wave, swept the planet. The Titanz awakened, not as gods, but as mindless, destructive forces of nature. You are a Shaper, a descendant of an ancient line who can psychically interface with these behemoths.</p>
-            <ul>
-                <li><strong>Hunt:</strong> Track colossal Titanz across vast, dynamic ecosystems. Analyze their weaknesses and prepare the battlefield.</li>
-                <li><strong>Subdue:</strong> Engage in multi-stage, skill-based battles reminiscent of epic boss fights.</li>
-                <li><strong>Become:</strong> Upon defeating a Titanz, a Shaper can psychically bond with it and directly control their bonded Titanz.</li>
-            </ul>
-            <h3>3. The Primal Bond: Web3 Integration</h3>
-            <p>Every unique, powerful entity in the game is an NFT on the Polygon blockchain. This provides verifiable proof of your achievements.</p>
-            <ul>
-                <li><strong>Genesis Shapers (Playable Characters):</strong> The foundational character NFTs. Limited supply with exclusive long-term benefits.</li>
-                <li><strong>Primal Cores (Titanz DNA):</strong> The most valuable assets. These NFTs are earned by subduing Titanz in the wild.</li>
-                <li><strong>Aethelian Land Sanctuaries (Land Plots):</strong> Rare plots of land shielded from the chaos.</li>
-            </ul>
-            <h3>4. Tokenomics: The $AEGIS Token</h3>
-            <p>The entire TitanzGame economy is anchored by the $AEGIS token. Its utilities include marketplace transactions, bonding & evolution, crafting, staking, and governance.</p>
-            <p>Total Supply: 2,000,000,000 $AEGIS</p>
+    <!-- MODAL / POPUP FORM -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">Start Your Project</h2>
+            <form onsubmit="sendEmail(event)">
+                <div class="form-group">
+                    <label class="form-label">Project Title</label>
+                    <input type="text" id="pTitle" class="form-input" placeholder="e.g., Multiplayer FPS Game" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Budget Range</label>
+                    <select id="pBudget" class="form-input">
+                        <option value="Not Specified">Select Budget</option>
+                        <option value="$1k - $5k">$1,000 - $5,000</option>
+                        <option value="$5k - $10k">$5,000 - $10,000</option>
+                        <option value="$10k+">$10,000+</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Project Details</label>
+                    <textarea id="pDesc" class="form-textarea" rows="5" placeholder="Describe your game idea, platform, and requirements..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Send via Email</button>
+            </form>
         </div>
     </div>
 
-    <div id="loading-overlay" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[101] hidden backdrop-blur-sm">
-        <div class="loader"></div>
-    </div>
-
-    <div id="coming-soon-overlay" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[101] hidden backdrop-blur-sm p-4 text-center">
-        <button id="close-coming-soon-btn" class="fixed top-4 right-4 text-5xl text-white hover:text-cyan-400 transition-colors">&times;</button>
-        <div>
-            <h2 class="text-7xl md:text-9xl" style="text-shadow: 0 0 20px var(--color-accent);">COMING SOON</h2>
-            <p class="mt-4 text-xl md:text-2xl text-stone-300">The Hunt will begin shortly. Follow us for updates.</p>
-        </div>
-    </div>
-
-
+    <!-- JAVASCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const theme = {
-                colors: {
-                    accent: getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim(),
-                    secondary: getComputedStyle(document.documentElement).getPropertyValue('--color-secondary-accent').trim(),
+        // Floating Button Logic
+        window.addEventListener('scroll', function() {
+            const btn = document.getElementById('ctaBtn');
+            if (window.scrollY > 300) {
+                if (!btn.classList.contains('floating')) {
+                    btn.classList.add('floating');
+                    btn.innerText = "Start Project ✉";
+                }
+            } else {
+                if (btn.classList.contains('floating')) {
+                    btn.classList.remove('floating');
+                    btn.innerText = "Start a Project";
                 }
             }
-
-            // --- Sound Engine ---
-            let soundsReady = false;
-            let synth, hoverSynth, clickSynth, rumbleSynth;
-
-            function initAudio() {
-                if (soundsReady) return;
-                Tone.start();
-                
-                hoverSynth = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }, volume: -20 }).toDestination();
-                clickSynth = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 10, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4, attackCurve: 'exponential'}, volume: -10 }).toDestination();
-                rumbleSynth = new Tone.NoiseSynth({ noise: { type: 'brown' }, envelope: { attack: 0.1, decay: 0.3, sustain: 0 }, volume: -25 }).toDestination();
-                soundsReady = true;
-                document.body.removeEventListener('click', initAudio);
-            }
-            document.body.addEventListener('click', initAudio, { once: true });
-
-
-            // --- Custom Cursor ---
-            const cursor = document.querySelector('.custom-cursor');
-            const cursorWisp = document.querySelector('.cursor-wisp');
-            
-            window.addEventListener('mousemove', e => {
-                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-            });
-            
-            const interactiveElements = document.querySelectorAll('a, button, .pillar-card, .team-member, .group');
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    cursorWisp.classList.add('hovered');
-                    if (soundsReady) hoverSynth.triggerAttackRelease('C5', '8n');
-                });
-                el.addEventListener('mouseleave', () => cursorWisp.classList.remove('hovered'));
-                el.addEventListener('click', () => {
-                     if (soundsReady) clickSynth.triggerAttackRelease("C1", "4n");
-                });
-            });
-
-            // --- Navbar Scroll Effect ---
-            const navbar = document.getElementById('navbar');
-            window.addEventListener('scroll', () => {
-                navbar.classList.toggle('bg-black/80', window.scrollY > 50);
-                navbar.classList.toggle('backdrop-blur-sm', window.scrollY > 50);
-            });
-
-            // --- Scroll Animations ---
-            let sectionRumblePlayed = new Map();
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        const sectionId = entry.target.id;
-                        if(sectionId && !sectionRumblePlayed.get(sectionId) && soundsReady) {
-                             rumbleSynth.triggerAttackRelease("0.2");
-                             sectionRumblePlayed.set(sectionId, true);
-                        }
-                    }
-                });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-
-            // --- Whitepaper Modal Logic ---
-            const modal = document.getElementById('whitepaper-modal');
-            const openBtn = document.getElementById('open-whitepaper-btn');
-            const closeBtn = document.getElementById('close-whitepaper-btn');
-
-            openBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-            closeBtn.addEventListener('click', () => {
-                modal.classList.add('hidden');
-                document.body.style.overflow = '';
-            });
-
-            // --- Play Game Sequence ---
-            const playBtn = document.getElementById('play-game-btn');
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const comingSoonOverlay = document.getElementById('coming-soon-overlay');
-            const closeComingSoonBtn = document.getElementById('close-coming-soon-btn');
-
-            playBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadingOverlay.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-
-                setTimeout(() => {
-                    loadingOverlay.classList.add('hidden');
-                    comingSoonOverlay.classList.remove('hidden');
-                }, 2500); // 2.5 second loading time
-            });
-
-            closeComingSoonBtn.addEventListener('click', () => {
-                comingSoonOverlay.classList.add('hidden');
-                document.body.style.overflow = '';
-            });
-
-            // --- Non-linear Roadmap Animation ---
-            const roadmapSection = document.getElementById('roadmap');
-            const path = document.getElementById("roadmap-path");
-            const nodes = [
-                { el: document.getElementById('node-1'), progress: 0.05 },
-                { el: document.getElementById('node-2'), progress: 0.35 },
-                { el: document.getElementById('node-3'), progress: 0.65 },
-                { el: document.getElementById('node-4'), progress: 0.98 }
-            ];
-            let pathLength = 0;
-            setTimeout(() => { pathLength = path.getTotalLength(); path.style.strokeDasharray = pathLength; path.style.strokeDashoffset = pathLength; }, 100);
-
-            function updateRoadmapAnimation() {
-                if(pathLength === 0) return;
-                const rect = roadmapSection.getBoundingClientRect();
-                const scrollPercent = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight + rect.height)));
-                
-                const drawLength = pathLength * scrollPercent;
-                path.style.strokeDashoffset = pathLength - drawLength;
-                
-                nodes.forEach(node => {
-                    if (scrollPercent >= node.progress) {
-                        node.el.classList.add('active');
-                    } else {
-                        node.el.classList.remove('active');
-                    }
-                });
-            }
-            window.addEventListener("scroll", updateRoadmapAnimation);
         });
-    </script>
 
+        function openModal() { document.getElementById('projectModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('projectModal').style.display = 'none'; }
+
+        function sendEmail(e) {
+            e.preventDefault();
+            const title = document.getElementById('pTitle').value;
+            const budget = document.getElementById('pBudget').value;
+            const desc = document.getElementById('pDesc').value;
+            const subject = `Project Inquiry: ${title}`;
+            const body = `Hi Team,\n\nI am interested in starting a project.\n\nProject Title: ${title}\nEstimated Budget: ${budget}\n\nProject Description:\n${desc}\n\nPlease get back to me.\n\nThanks!`;
+            window.location.href = `mailto:noman3869@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            closeModal();
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('projectModal')) { closeModal(); }
+        }
+    </script>
 </body>
 </html>
