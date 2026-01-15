@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titanz Games | Game Development Studio</title>
+    
+    <!-- ADDED: Google Font 'Rajdhani' for that Game/Sci-Fi look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+
     <style>
         /* --- VISUAL THEME (Dark Mode + Neon) --- */
         :root {
@@ -15,7 +21,8 @@
             --card-bg: #111111;
             --gradient-text: linear-gradient(90deg, #fff, var(--accent-cyan));
             --gradient-glow: radial-gradient(circle at center, rgba(189, 0, 255, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
-            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            /* UPDATED FONT FAMILY */
+            --font-main: 'Rajdhani', sans-serif;
         }
 
         * {
@@ -30,6 +37,7 @@
             font-family: var(--font-main);
             line-height: 1.6;
             overflow-x: hidden;
+            font-size: 18px; /* Slightly larger base text */
         }
 
         a { text-decoration: none; color: inherit; transition: 0.3s; }
@@ -46,15 +54,16 @@
             background: var(--gradient-text);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 900;
+            font-weight: 700;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: 3rem; /* Increased size */
             margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
+            font-weight: 700;
         }
 
         .divider-gradient {
@@ -65,7 +74,7 @@
             border-radius: 2px;
         }
 
-        /* --- HERO SECTION (Single Image / CSS Background) --- */
+        /* --- HERO SECTION --- */
         header {
             height: 100vh;
             display: flex;
@@ -77,37 +86,21 @@
             background-color: #000;
         }
 
-        /* SCI-FI CSS BACKGROUND (Placeholder for your Image) */
+        /* SCI-FI CSS BACKGROUND */
         .hero-bg {
-    position: absolute;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%;
-    z-index: 0;
-
-    /* REPLACE 'background.jpg' WITH YOUR EXACT FILE NAME */
-    background: linear-gradient(rgba(0,0,0,0.5), #000), url('background.png');
-
-    /* This makes sure the image covers the whole screen */
-    background-size: cover;
-    background-position: center;
-    
-    /* Keep the animation if you like the slow zoom effect */
-    animation: pulseGlow 15s infinite alternate;
-}
-        
-        /* If you have a real image, uncomment below and add URL */
-        /* .hero-bg {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('YOUR_IMAGE_URL.jpg');
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            /* Placeholder Sci-Fi Background Image */
+            background: linear-gradient(rgba(0,0,0,0.6), #050505), url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop'); 
             background-size: cover;
             background-position: center;
-        } 
-        */
+            animation: pulseGlow 15s infinite alternate;
+        }
 
         @keyframes pulseGlow {
             0% { transform: scale(1); }
-            100% { transform: scale(1.02); }
+            100% { transform: scale(1.05); }
         }
 
         .hero-content {
@@ -117,28 +110,30 @@
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: var(--accent-cyan);
             text-transform: uppercase;
             letter-spacing: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: block;
             text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+            font-weight: 600;
             animation: fadeInDown 1s ease-out;
         }
 
         .hero-content h1 {
-            font-size: 5rem;
-            line-height: 1;
+            font-size: 6rem; /* Larger Title */
+            line-height: 0.9;
             margin-bottom: 30px;
             letter-spacing: -2px;
             text-transform: uppercase;
             color: #fff;
+            font-weight: 700;
             animation: fadeInUp 1s ease-out 0.2s backwards;
         }
 
         .hero-content p {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: #ddd;
             margin-bottom: 40px;
             max-width: 700px;
@@ -150,14 +145,14 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STATS BAR (Accomplishments) --- */
+        /* --- STATS BAR --- */
         .stats-bar {
             background: #111;
             border-bottom: 1px solid #222;
             padding: 40px 0;
             position: relative;
             z-index: 5;
-            margin-top: -5px; /* Pull up to connect with hero */
+            margin-top: -5px; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
@@ -170,19 +165,20 @@
         }
 
         .stat-item h3 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
-            font-weight: 900;
+            font-weight: 700;
         }
 
         .stat-item p {
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-size: 1rem;
             letter-spacing: 2px;
             color: #888;
+            font-weight: 600;
         }
 
         /* --- PORTFOLIO SECTION --- */
@@ -252,17 +248,17 @@
         .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; background: var(--card-bg); position: relative; z-index: 2; }
 
         .platform-tag {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: var(--accent-cyan);
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 700;
             letter-spacing: 1px;
             margin-bottom: 10px;
             display: block;
         }
 
-        .project-title { font-size: 1.4rem; margin-bottom: 10px; color: #fff; }
-        .project-desc { font-size: 0.9rem; color: var(--text-gray); margin-bottom: 20px; flex-grow: 1; }
+        .project-title { font-size: 1.6rem; margin-bottom: 10px; color: #fff; font-weight: 700; }
+        .project-desc { font-size: 1rem; color: var(--text-gray); margin-bottom: 20px; flex-grow: 1; }
 
         .btn-link {
             align-self: flex-start;
@@ -270,9 +266,10 @@
             background: transparent;
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 50px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            font-weight: 600;
         }
         .btn-link:hover { background: var(--accent-purple); border-color: var(--accent-purple); color: #fff; }
 
@@ -300,7 +297,7 @@
             width: 100%;
             max-width: 400px;
             border-radius: 20px;
-            box-shadow: -20px 20px 0px rgba(0, 242, 255, 0.1); /* Stylized shadow */
+            box-shadow: -20px 20px 0px rgba(0, 242, 255, 0.1); 
             border: 1px solid #333;
             display: block;
             margin: 0 auto;
@@ -320,15 +317,15 @@
             display: block;
         }
 
-        .founder-name { font-size: 3rem; line-height: 1.1; margin-bottom: 20px; }
-        .founder-bio { font-size: 1.1rem; color: #ccc; margin-bottom: 30px; }
+        .founder-name { font-size: 3.5rem; line-height: 1.1; margin-bottom: 20px; font-weight: 700; }
+        .founder-bio { font-size: 1.2rem; color: #ccc; margin-bottom: 30px; }
 
         /* --- TESTIMONIALS --- */
         #testimonials { padding: 100px 0; background: #050505; }
         .review-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .review-card { background: linear-gradient(145deg, #111, #0c0c0c); padding: 40px; border-radius: 20px; border-left: 4px solid var(--accent-cyan); position: relative; }
         .review-card::before { content: "“"; position: absolute; top: 10px; left: 20px; font-size: 4rem; color: rgba(255,255,255,0.05); font-family: serif; }
-        .review-text { font-style: italic; font-size: 1.05rem; margin-bottom: 25px; color: #ddd; position: relative; z-index: 1; }
+        .review-text { font-style: italic; font-size: 1.1rem; margin-bottom: 25px; color: #ddd; position: relative; z-index: 1; }
         .client-name { font-weight: bold; color: var(--accent-purple); }
         .source-tag { font-size: 0.8rem; color: #666; margin-top: 5px; }
 
@@ -360,7 +357,7 @@
 
         /* --- FOOTER --- */
         footer { padding: 80px 0; text-align: center; background: linear-gradient(to top, #150020, #050505); }
-        .footer-title { font-size: 2rem; margin-bottom: 30px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .footer-title { font-size: 2rem; margin-bottom: 30px; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
         .social-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 40px; }
         .social-links a { font-size: 1.1rem; color: #ccc; border-bottom: 1px solid transparent; padding-bottom: 5px; }
         .social-links a:hover { color: var(--accent-cyan); border-bottom: 1px solid var(--accent-purple); }
@@ -382,7 +379,7 @@
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .hero-content h1 { font-size: 3rem; }
+            .hero-content h1 { font-size: 3.5rem; }
             .stats-grid { flex-direction: column; gap: 20px; }
             .founder-wrapper { flex-direction: column; text-align: center; }
             .founder-img { margin-bottom: 30px; }
@@ -391,9 +388,8 @@
 </head>
 <body>
 
-    <!-- HERO SECTION (Single Background) -->
+    <!-- HERO SECTION -->
     <header>
-        <!-- CSS-Generated Sci-Fi Background -->
         <div class="hero-bg"></div>
 
         <div class="container hero-content">
@@ -410,7 +406,7 @@
         </div>
     </header>
 
-    <!-- STATS / ACCOMPLISHMENTS BAR -->
+    <!-- STATS BAR -->
     <div class="stats-bar">
         <div class="container">
             <div class="stats-grid">
@@ -440,8 +436,7 @@
                 <!-- Project 1 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/strategotchi.gif" alt="Strategotchi Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/strategotchi.gif" alt="Strategotchi Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/00f2ff?text=Strategotchi'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -455,8 +450,7 @@
                 <!-- Project 2 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/internet-cafe.gif" alt="Internet Cafe Tycoon Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/internet-cafe.gif" alt="Internet Cafe Tycoon Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/00f2ff?text=Internet+Cafe'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -470,8 +464,7 @@
                 <!-- Project 3 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/mapbox.gif" alt="Map Box Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/mapbox.gif" alt="Map Box Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/00f2ff?text=Map+Box'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -485,8 +478,7 @@
                 <!-- Project 4 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/amygdala.gif" alt="The Amygdala Protocol Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/amygdala.gif" alt="The Amygdala Protocol Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/bd00ff?text=Amygdala'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -497,11 +489,10 @@
                     </div>
                 </div>
 
-                <!-- Project 5: REPLACED PixelTorque with Tap Drifter -->
+                <!-- Project 5 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/tapdrifter.gif" alt="Tap Drifter Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/tapdrifter.gif" alt="Tap Drifter Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/bd00ff?text=Tap+Drifter'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -515,8 +506,7 @@
                 <!-- Project 6 -->
                 <div class="project-card">
                     <div class="media-placeholder">
-                        <img src="gifs/fruitmerge.gif" alt="Fruit Merge Gameplay" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <span style="display:none; z-index:0;">[ GIF PLACEHOLDER ]</span>
+                        <img src="gifs/fruitmerge.gif" alt="Fruit Merge Gameplay" onerror="this.src='https://via.placeholder.com/600x400/111/bd00ff?text=Fruit+Merge'">
                         <div class="play-overlay">▶</div>
                     </div>
                     <div class="card-content">
@@ -535,8 +525,8 @@
         <div class="container">
             <div class="founder-wrapper">
                 <div class="founder-image-box">
-                    <!-- Ensure your image is named 'profile.png' and is in the same folder -->
-                    <img src="profile.png" alt="Noman Nazir" class="founder-img" onerror="this.src='https://via.placeholder.com/400x500/222/555?text=Founder+Image'">
+                    <!-- Placeholder Profile Image -->
+                    <img src="profile.png" alt="Noman Nazir" class="founder-img" onerror="this.src='https://via.placeholder.com/400x500/222/555?text=Founder+Photo'">
                 </div>
                 <div class="founder-content">
                     <span class="founder-label">Leadership</span>
@@ -549,7 +539,6 @@
                     </p>
                     <div class="social-links" style="justify-content: flex-start;">
                         <a href="https://www.linkedin.com/in/noman-nazir-37a983289/" target="_blank">LinkedIn</a>
-                        <!-- UPDATED: Replaced Upwork with Fiverr -->
                         <a href="https://www.fiverr.com/game_dev3loper" target="_blank">Fiverr Profile</a>
                     </div>
                 </div>
@@ -564,7 +553,6 @@
             <div class="divider-gradient"></div>
 
             <div class="review-grid">
-                <!-- Reviews -->
                 <div class="review-card">
                     <p class="review-text">"Exceptional Multiplayer Integration. Titanz Games handled the synchronization and lag compensation perfectly."</p>
                     <div class="client-name">Verified Client (USA)</div>
