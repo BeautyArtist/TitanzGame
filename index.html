@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock">
     <title>Titanz Games | Game Development Studio</title>
     
     <!-- ADDED: Google Font 'Rajdhani' for that Game/Sci-Fi look -->
@@ -50,13 +51,13 @@
             padding: 0 20px;
         }
 
-        .gradient-text {
-            background: var(--gradient-text);
-            -webkit-background-clip: text;
-background-clip: text;  /* <--- ADD THIS LINE */
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
+    .gradient-text {
+    background: var(--gradient-text) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important; /* Force transparency */
+}
 
         .section-title {
             font-size: 3rem; /* Increased size */
